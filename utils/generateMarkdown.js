@@ -1,6 +1,4 @@
-const fs = require('fs');
-
-// Function that returns a license badge based on which license is passed in
+// Returns a license badge based on which license is passed in
 // If there is no license, return an empty string
 const renderLicenseBadge = license => {
     switch(license) {
@@ -25,7 +23,7 @@ const renderLicenseBadge = license => {
       } 
 }
 
-// Function that returns the license link
+// Returns the license link
 // If there is no license, return an empty string
 function renderLicenseLink(license) {
     switch(license) {
@@ -50,7 +48,7 @@ function renderLicenseLink(license) {
       } 
 }
 
-// Function that returns the license section of README
+// Returns the license section of README
 // If there is no license, return an empty string
 function renderLicenseSection(license) {
     if (!license) {
@@ -60,21 +58,77 @@ function renderLicenseSection(license) {
     return `[![License: ${license}]${renderLicenseBadge(license)}](${renderLicenseLink(license)})`;
 }
 
-// TODO: Create a function to generate markdown for README
+// Return the table of contents
+// Returns empty strings for the contributing and tests sections if there is no content
+function renderToc(contributing, tests) {
+    let contributingToc = `* [Contributing](#contributing)`;
+    let testsToc = `* [Tests](#tests)`;
+
+    if (!contributing) {
+        contributingToc = '';
+    }
+
+    if (!tests) {
+        testsToc = '';
+    }
+
+    return `
+* [Installation](#installation)
+* [Usage](#usage)
+${contributingToc}
+${testsToc}
+* [License](#license)
+* [Questions](#questions)
+    `;
+}
+
+// Generate the tests section
+// If there is no content, return an empty string
+function renderTests(tests) {
+    if (!tests) {
+        return '';
+    } 
+
+    return `
+## Tests
+${tests}
+    `;
+}
+
+// Generate the contributing section
+// If there is no content, return an empty string
+function renderContributing(contributing) {
+    if (!contributing) {
+        return '';
+    }
+
+    return `
+## Contributing
+${contributing}
+    `;
+}
+
+// Generates markdown for README
+// Note: the non-indentation is needed for markdown to display
 function generateMarkdown(data) {
-  return `
-  # ${data.title}
-  ## License
-  ${renderLicenseSection(data.license)}
-  ## Description 
-  ${data.description}
-  ## Installation 
-  ${data.installation}
-  ## Instructions
-  ${data.instructions}
-  ## Questions 
-  Find me at ${data.username} or contact me at ${data.email} with any additional questions.
-`;
+    return `
+# ${data.title}
+${renderLicenseSection(data.license)}
+## Description 
+${data.description}
+## Table of Contents
+${renderToc(data.contributing, data.tests)}
+## Installation 
+${data.installation}
+## Usage
+${data.usage}
+${renderContributing(data.contributing)}
+${renderTests(data.tests)}
+## License
+This project is licensed under the terms of [${data.license}](${renderLicenseLink(data.license)})
+## Questions 
+Find me on [Github](https://github.com/${data.username}) or contact me at [${data.email}](mailto:${data.email}) with any additional questions.
+    `;
 }
 
 module.exports = generateMarkdown;
